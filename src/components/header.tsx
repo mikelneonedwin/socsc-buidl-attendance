@@ -20,12 +20,12 @@ const Header = () => {
   const account = useCurrentAccount();
   const location = useLocation();
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b shadow-sm">
+    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-md border-b shadow-sm">
       <div className="container flex items-center justify-between py-3 px-4 sm:px-6">
         {/* Logo */}
         <div className="flex items-center gap-3">
           <Sui className="h-10 w-10 sm:h-12 sm:w-12" />
-          <h1 className="max-sm:hidden text-xl sm:text-2xl font-semibold tracking-tight text-[#0D3A42]">
+          <h1 className="max-sm:hidden text-xl sm:text-2xl font-semibold tracking-tight text-primary">
             SOCSC UNIUYO
           </h1>
         </div>
@@ -65,7 +65,7 @@ const Header = () => {
               </SheetTrigger>
               <SheetContent side="right" className="flex flex-col">
                 <SheetHeader>
-                  <SheetTitle className="text-[#0D3A42] font-semibold">
+                  <SheetTitle className="text-primary font-semibold">
                     Navigation
                   </SheetTitle>
                 </SheetHeader>

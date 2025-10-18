@@ -66,10 +66,10 @@ const History = () => {
   return (
     <section className="py-20 bg-[#F9FBFC]">
       <div className="container mx-auto max-w-5xl px-6">
-        <Card className="shadow-md border border-slate-200">
+        <Card className="shadow-md">
           <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <CardTitle className="text-2xl font-bold text-[#0D3A42]">
+              <CardTitle className="text-2xl font-bold text-primary">
                 Submission History
               </CardTitle>
               <p className="text-sm text-muted-foreground">
@@ -120,9 +120,7 @@ const History = () => {
                         <TableCell>{submission.registrationNumber}</TableCell>
                         <TableCell>
                           {submission.attended ? (
-                            <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
-                              Present
-                            </Badge>
+                            <Badge>Present</Badge>
                           ) : (
                             <Badge variant="secondary">Absent</Badge>
                           )}

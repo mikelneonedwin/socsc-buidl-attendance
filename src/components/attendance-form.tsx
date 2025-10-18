@@ -69,13 +69,13 @@ const AttendanceForm = () => {
   });
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-background">
       <div className="container mx-auto max-w-2xl px-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit((values) => submitForm(values))}>
-            <Card className="shadow-lg border border-slate-200">
+            <Card className="shadow-lg">
               <CardContent>
-                <h3 className="text-2xl font-bold text-center mb-8 text-[#0D3A42]">
+                <h3 className="text-2xl font-bold text-center mb-8 text-primary">
                   BUIDL Session Attendance
                 </h3>
                 <div className="flex flex-col gap-6">
