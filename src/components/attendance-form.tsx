@@ -31,10 +31,8 @@ const formSchema = z.object({
       parts.push(number.toString().padStart(3, "0"));
       return parts.join("-");
     }),
-  attended: z.literal(true, {
-    errorMap: () => ({
-      message: "Please confirm that you attended the BUIDL session.",
-    }),
+  attended: z.literal<boolean>(true, {
+    error: "Please confirm that you attended the BUIDL session.",
   }),
 });
 
