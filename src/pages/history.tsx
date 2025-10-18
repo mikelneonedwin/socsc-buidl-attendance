@@ -1,11 +1,20 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useCurrentAccount } from "@mysten/dapp-kit";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { Navigate } from "react-router";
 import { toast } from "sonner";
 
 type Submission = {
@@ -41,14 +50,18 @@ const fetchSubmissions = async (): Promise<Submission[]> => {
 };
 
 const History = () => {
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError, refetch, error } = useQuery({
     queryKey: ["submissions"],
     queryFn: fetchSubmissions,
   });
-
   if (isError) {
-    toast.error("Unable to fetch submissions. Please try again.");
+    toast.error("Unable to fetch submissions. Please try again.", {
+      description: error.message,
+    });
   }
+  const account = useCurrentAccount();
+
+  if (!account) return <Navigate to="/" replace />;
 
   return (
     <section className="py-20 bg-[#F9FBFC]">

@@ -1,5 +1,11 @@
-import { Card, CardContent, CardFooter } from "./ui/card";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardFooter } from "./ui/card";
+import { Checkbox } from "./ui/checkbox";
 import {
   Form,
   FormControl,
@@ -8,14 +14,8 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
-import { useForm } from "react-hook-form";
 import { Input } from "./ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
-import { Button } from "./ui/button";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Please enter your full name." }),
