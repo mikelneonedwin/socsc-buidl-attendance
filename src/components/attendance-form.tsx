@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -16,6 +15,8 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { useCurrentAccount } from "@mysten/dapp-kit";
+import { useRegisterAttendance } from "@/hooks/useSuilistContract";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Please enter your full name." }),
@@ -38,8 +39,10 @@ const formSchema = z.object({
 
 type FormSchema = z.infer<typeof formSchema>;
 
-const toastId = "attendance-toast";
 const AttendanceForm = () => {
+  const account = useCurrentAccount();
+  const { mutate: registerAttendance, isPending } = useRegisterAttendance();
+  
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -50,29 +53,64 @@ const AttendanceForm = () => {
     },
   });
 
-  const { mutate: submitForm } = useMutation({
-    mutationFn: async (data: FormSchema) => {
-      await new Promise((res) => setTimeout(() => res(data), 3000));
-    },
-    onMutate: () => {
-      toast.loading("Submitting your attendance...", { id: toastId });
-    },
-    onSuccess: () => {
-      toast.success("Attendance recorded successfully!", { id: toastId });
-    },
-    onError: (error) => {
-      toast.error("Something went wrong. Please try again.", {
-        id: toastId,
-        description: error.message,
-      });
-    },
-  });
+  const onSubmit = (data: FormSchema) => {
+    if (!account) {
+      toast.error("Please connect your wallet first!");
+      return;
+    }
+
+    const toastId = "attendance-toast";
+    
+    registerAttendance({
+      name: data.name,
+      department: data.department,
+      registrationNumber: data.registrationNumber,
+    }, {
+      onMutate: () => {
+        toast.loading("Recording your attendance on blockchain...", { id: toastId });
+      },
+      onSuccess: (result) => {
+        console.log("Transaction successful:", result);
+        toast.success("Attendance recorded successfully on blockchain!", { 
+          id: toastId,
+          description: `Transaction: ${result.digest}`,
+        });
+        form.reset();
+      },
+      onError: (error) => {
+        console.error("Transaction failed:", error);
+        toast.error("Failed to record attendance", {
+          id: toastId,
+          description: error.message || "Please try again.",
+        });
+      },
+    });
+  };
+
+  if (!account) {
+    return (
+      <section className="py-20 bg-background">
+        <div className="container mx-auto max-w-2xl px-6 text-center">
+          <Card className="shadow-lg">
+            <CardContent className="pt-8">
+              <h3 className="text-2xl font-bold mb-4 text-primary">
+                Connect Your Wallet
+              </h3>
+              <p className="text-muted-foreground">
+                Please connect your Sui wallet to record your attendance on the blockchain.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto max-w-2xl px-6">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit((values) => submitForm(values))}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
             <Card className="shadow-lg">
               <CardContent>
                 <h3 className="text-2xl font-bold text-center mb-8 text-primary">
@@ -147,8 +185,12 @@ const AttendanceForm = () => {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button type="submit" className="w-full">
-                  Submit Attendance
+                <Button 
+                  type="submit" 
+                  className="w-full" 
+                  disabled={isPending}
+                >
+                  {isPending ? "Recording..." : "Submit Attendance"}
                 </Button>
               </CardFooter>
             </Card>
